@@ -2,14 +2,13 @@ import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import javax.imageio.ImageIO;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
 import java.awt.Graphics2D;
 import com.jaunt.*;
 import com.jaunt.component.Table;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 
 import java.util.Scanner;
 
@@ -34,6 +33,17 @@ public class bookScanner {
         }
     }
 
+    private static void findAuthor(String isbn) throws JauntException {
+
+        UserAgent userAgent = new UserAgent();
+        //userAgent.settings.autoSaveAsHTML = true;
+
+        userAgent.visit("http://bookfinder4u.com/IsbnSearch.aspx?isbn=" + isbn + "&mode=direct");
+        Element elements;
+        elements = userAgent.doc.findFirst("<span id=author_span>");
+        System.out.println("Written " + elements.innerText());
+
+    }
     // ================================================================================================================
     /* This function initializes a "search object" which is userAgent
      * It visits the website and inserts the decoded ISBN into the search URL
@@ -48,12 +58,17 @@ public class bookScanner {
 
         userAgent.visit("http://bookfinder4u.com/IsbnSearch.aspx?isbn=" + isbn + "&mode=direct");
         Element elements;   // creates object 'elements'
+        Element element2;
 
         elements = userAgent.doc.findFirst("<b class=t9>");
-        // TODO: FIND THE TAGS FOR *AUTHOR, EDITION(?), CHECK AMAZON PRICES(?)
+        //element2 = userAgent.doc.findFirst("<span id=author_span>");
+        // TODO: FIND THE TAGS FOR *AUTHOR (DONE), EDITION(?), CHECK AMAZON PRICES(?)
         //elements = userAgent.doc.findFirst("<h1>");
         System.out.println("The name of the book you entered is: " + "'" + elements.innerText() + "'");
+
+        //System.out.println("Authors: " + element2.innerText());
     }
+
 
     // ================================================================================================================
     /* Creates new file object to be read as the original image
@@ -102,6 +117,7 @@ public class bookScanner {
             String decodedText = decodeQRCode(readFile);
             try {
                 findTitle(decodedText);
+                findAuthor(decodedText);
 
             } finally {
                 System.out.println("\n");}
