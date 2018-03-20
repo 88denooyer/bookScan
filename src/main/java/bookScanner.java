@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class bookScanner {
 
     // ================================================================================================================
-
+    /* This function initializes the objects needed to initiate a scan for the barcode */
     private static String decodeQRCode(File qrCodeImage) throws IOException {
 
         BufferedImage bufferedImage = ImageIO.read(qrCodeImage);    // reads in an image (.png) source
@@ -35,6 +35,11 @@ public class bookScanner {
     }
 
     // ================================================================================================================
+    /* This function initializes a "search object" which is userAgent
+     * It visits the website and inserts the decoded ISBN into the search URL
+     * An element needs to be found
+     * The title on this specific website is contained in "<b class=t9>"
+     * It will then find and print the "innerText" which is what comes after the <b> tag within the code */
 
     private static void findTitle(String isbn) throws JauntException {
 
@@ -45,14 +50,20 @@ public class bookScanner {
         Element elements;   // creates object 'elements'
 
         elements = userAgent.doc.findFirst("<b class=t9>");
+        // TODO: FIND THE TAGS FOR *AUTHOR, EDITION(?), CHECK AMAZON PRICES(?)
         //elements = userAgent.doc.findFirst("<h1>");
         System.out.println("The name of the book you entered is: " + "'" + elements.innerText() + "'");
     }
 
     // ================================================================================================================
+    /* Creates new file object to be read as the original image
+     * Reads image object and gets parameters to begin converting to black and white
+     * Writes new image which has now been converted to BW
+     * Note: this file is placed in a "delete" folder which will be called for deletion later to save space
+     *      This may be fixed by the TODO below */
 
     private static void convertBW() {
-
+        // TODO: FIND WAY TO INIT FILE OBJECT WITHOUT CALLING LOCAL DIRECTORY
         try{
             File file = new File("/Users/andrewdenooyer/Documents/bookScanner/src/main/resources/res/" +
                     "CUDABOOK.jpeg");
@@ -77,9 +88,14 @@ public class bookScanner {
 
     public static void main(String[] args) throws JauntException {
 
-        double start = System.currentTimeMillis();
+        double start = System.currentTimeMillis();  // just to see how long the program takes
         try {
 
+            /* Calls black and white conversion function
+             * Uses black and white photo for decoding (RGB photo does not scan)
+             * Then calls function to find the title of the book from the searched ISBN
+             *
+             * */
             convertBW();
             File readFile = new File("/Users/andrewdenooyer/Documents/bookScanner/src/main/resources/del/" +
                     "CUDABOOKBW.jpeg");
@@ -106,9 +122,8 @@ public class bookScanner {
         if(deleteFile.delete()) {System.out.println("\n");}
         else { System.out.println("FAILED");}
 
-        double end = System.currentTimeMillis();
+        double end = System.currentTimeMillis();    // again just to see how long the program takes to run
         double time = end - start;
-
         System.out.println("Time = " + time + " milliseconds");
 
     }
