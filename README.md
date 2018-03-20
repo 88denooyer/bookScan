@@ -8,3 +8,16 @@ Current Status:
   barcode is fetched and entered in a website search link
   
   web scraper finds title of book
+
+
+# dependencies 
+
+gradle.build contains the following for the ZXing scanner:
+
+compile "com.google.zxing:core:3.3.0"
+
+compile 'com.google.zxing:javase:3.3.0'
+
+# jar files
+
+be sure to add "jaunt1.3.9.jar" to your module dependencies for the web scraper integration
